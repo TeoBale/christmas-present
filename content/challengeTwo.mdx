@@ -1,0 +1,92 @@
+# Challenge 2
+
+Ora che muoverci da soli non ci basta più, dobbiamo trovare un nuovo modo di muoverci in mezzo a tutta la confusione dei nostri impegni che a volte ci sembrano ostacoli.
+
+Siamo partiti da punti distanti, ognuno di noi seguiva il proprio percorso, ma a un certo punto ci siamo uniti e abbiamo deciso di muoverci assieme verso i nostri obbiettivi.
+
+Con il tempo stai iniziando a conoscermi sempre di più, eormai penso che ti sia accorta di quanto io sia impaziente.. confido in te sapendo che cercherai il modo più rapido di unirci e raggiungere il nostro obbiettivo.
+Mi impegno a seguire le tue indicazioni !
+
+PS: non ti puoi allontanare troppo da me, altrimenti dinvento troppo triste..
+
+---
+
+L'Input consiste in una griglia $N \times M$. Due agenti, $A$ (Io) e $B$ (Tu), partono da coordinate diverse $(Sx_1, Sy_1)$ e $(Sx_2, Sy_2)$.Comandi: Un singolo input [UP, DOWN, LEFT, RIGHT] muove entrambi gli agenti contemporaneamente.
+
+| Simbolo | Descrizione                                    |
+| :-----: | :--------------------------------------------- |
+|   `.`   | Vuoto                                          |
+|   `#`   | Muro statico                                   |
+|   `~`   | Muro attivo turni Dispari (Impegno dinamico A) |
+|   `*`   | Muro attivo turni Pari (Impegno dinamico B)    |
+|   `A`   | Start Tu                                       |
+|   `B`   | Start Io                                       |
+|   `X`   | Punto di incontro (Meeting Point)              |
+
+Se uno sbatte contro un muro e l'altro no, quello bloccato resta fermo, l'altro avanza (desincronizzazione della posizione).
+
+Se in qualsiasi momento la Distanza di Manhattan ($|x1-x2| + |y1-y2|$) tra S1 ed S2 supera questa soglia, lo stato è invalido (Game Over).
+
+La mappa contiene "Grovigli" (Muri instabili). Un muro di tipo ~ esiste solo nei turni dispari. Un muro di tipo \* esiste solo nei turni pari. Bisogna calcolare il tempo per passare attraverso i grovigli.
+
+### Example
+
+**Goal:** Move A and B to the meeting point X simultaneously.
+Constraint: The Manhattan distance between A and B must NEVER exceed the Tether limit.
+`|xA - xB| + |yA - yB| <= 6`
+
+```txt
+
+Legend:
+  # : Permanent Wall
+  ~ : Wall only on ODD turns (1, 3, 5...)
+  * : Wall only on EVEN turns (2, 4, 6...)
+  A : Agent A (You)
+  B : Agent B (Partner)
+  X : Meeting Point
+
+   0123456789012345678901234
+0  #########################
+1  # # ~         #   #*    #
+2  # ##### ### #~#   # ### #
+3  #~    #    *#   #   #~  #
+4  ## ##  ####   # # ### ###
+5  #     #   # # #X   B    #
+6  # ##### # # # #####~##  #
+7  #       ~   #  ~#       #
+8  #  ############ # ### # #
+9  #   #        *~   # #  ~#
+10 #*### ## * ###  ### ### #
+11 #       #          A    #
+12 #########################
+
+
+Solving... (this might take a moment)
+
+SUCCESS! Found solution in 18 steps.
+Path (Step: A_pos | B_pos):
+Time 1: A(20, 11) | B(20, 5)
+Time 2: A(21, 11) | B(21, 5)
+Time 3: A(22, 11) | B(22, 5)
+Time 4: A(23, 11) | B(22, 6)
+Time 5: A(23, 10) | B(22, 6)
+Time 6: A(23, 9) | B(22, 6)
+Time 7: A(23, 8) | B(22, 6)
+Time 8: A(23, 7) | B(22, 6)
+Time 9: A(23, 6) | B(22, 6)
+Time 10: A(23, 5) | B(22, 6)
+Time 11: A(22, 5) | B(22, 5)
+Time 12: A(21, 5) | B(21, 5)
+Time 13: A(20, 5) | B(20, 5)
+Time 14: A(19, 5) | B(19, 5)
+Time 15: A(18, 5) | B(18, 5)
+Time 16: A(17, 5) | B(17, 5)
+Time 17: A(16, 5) | B(16, 5)
+Time 18: A(15, 5) | B(15, 5)
+```
+
+La soluzione è: `18`
+
+<ChallengeInput href="api/challenge-2" solution="59" />
+
+<div className="h-20"></div>

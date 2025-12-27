@@ -1,128 +1,73 @@
-"use client";
-
 import { Challenge } from "@/components/challenge";
-import { Door } from "@/components/svgs/door";
-import { Gift } from "@/components/svgs/gift";
-import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
-import { useScene, ScenePhase } from "@/context/scene-context";
+import { HomePage } from "@/components/home-page";
+import fs from "fs";
+import path from "path";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import { ChallengeInput } from "@/components/challengeInput";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 
-export function Page() {
-    const {
-        phase,
-        setPhase,
-        doorOneOpen,
-        setDoorOneOpen,
-        doorTwoOpen,
-        setDoorTwoOpen,
-        doorThreeOpen,
-        setDoorThreeOpen,
-    } = useScene();
+export default function Page() {
+    const challengeOnePath = path.join(
+        process.cwd(),
+        "content",
+        "challengeOne.mdx"
+    );
+    const challengeOneContent = fs.readFileSync(challengeOnePath, "utf8");
 
-    const phases: ScenePhase[] = [
-        "idle",
-        "challenge1",
-        "challenge2",
-        "challenge3",
-        "win",
-    ];
+    const challengeTwoPath = path.join(
+        process.cwd(),
+        "content",
+        "challengeTwo.mdx"
+    );
+    const challengeTwoContent = fs.readFileSync(challengeTwoPath, "utf8");
 
-    const scale = {
-        idle: 1,
-        challenge1: 1 / 3,
-        challenge2: 1 / 2,
-        challenge3: 1,
-        win: 1,
+    const challengeThreePath = path.join(
+        process.cwd(),
+        "content",
+        "challengeThree.mdx"
+    );
+    const challengeThreeContent = fs.readFileSync(challengeThreePath, "utf8");
+
+    const mdxContents = {
+        challenge1: (
+            <MDXRemote
+                source={challengeOneContent}
+                components={{ ChallengeInput }}
+                options={{
+                    mdxOptions: {
+                        remarkPlugins: [remarkGfm, remarkMath],
+                        rehypePlugins: [rehypeKatex],
+                    },
+                }}
+            />
+        ),
+        challenge2: (
+            <MDXRemote
+                source={challengeTwoContent}
+                components={{ ChallengeInput }}
+                options={{
+                    mdxOptions: {
+                        remarkPlugins: [remarkGfm, remarkMath],
+                        rehypePlugins: [rehypeKatex],
+                    },
+                }}
+            />
+        ),
+        challenge3: (
+            <MDXRemote
+                source={challengeThreeContent}
+                components={{ ChallengeInput }}
+                options={{
+                    mdxOptions: {
+                        remarkPlugins: [remarkGfm, remarkMath],
+                        rehypePlugins: [rehypeKatex],
+                    },
+                }}
+            />
+        ),
     };
 
-    return (
-        <div className="w-full h-screen overflow-hidden flex flex-col">
-            <div className="w-full flex flex-row items-center gap-4 justify-center h-16 border-b border-border z-50 bg-white">
-                <ButtonGroup>
-                    {phases.map((p) => (
-                        <Button
-                            size="sm"
-                            key={p}
-                            onClick={() => setPhase(p)}
-                            variant={phase === p ? "default" : "outline"}
-                        >
-                            {p.charAt(0).toUpperCase() + p.slice(1)}
-                        </Button>
-                    ))}
-                </ButtonGroup>
-                <ButtonGroup>
-                    <Button
-                        size="sm"
-                        onClick={() => setDoorOneOpen(!doorOneOpen)}
-                        variant={doorOneOpen ? "default" : "outline"}
-                    >
-                        Door 1
-                    </Button>
-                    <Button
-                        size="sm"
-                        onClick={() => setDoorTwoOpen(!doorTwoOpen)}
-                        variant={doorTwoOpen ? "default" : "outline"}
-                    >
-                        Door 2
-                    </Button>
-                    <Button
-                        size="sm"
-                        onClick={() => setDoorThreeOpen(!doorThreeOpen)}
-                        variant={doorThreeOpen ? "default" : "outline"}
-                    >
-                        Door 3
-                    </Button>
-                </ButtonGroup>
-            </div>
-            <div className="flex flex-row h-full w-full">
-                <div className="h-full w-full flex flex-col items-center justify-center gap-4">
-                    <div className="grid grid-cols-1 grid-rows-1 place-items-center">
-                        <div className="col-start-1 row-start-1 z-0">
-                            <Gift phase={phase} scale={scale[phase]} />
-                        </div>
-                        <div
-                            className={`col-start-1 row-start-1 z-10 ${
-                                doorOneOpen ? "pointer-events-none" : ""
-                            }`}
-                        >
-                            <Door
-                                isOpen={doorOneOpen}
-                                phase={phase}
-                                scale={1 * scale[phase]}
-                                scaleDelay={0}
-                                phaseDelay={1}
-                            />
-                        </div>
-                        <div
-                            className={`col-start-1 row-start-1 z-11 ${
-                                doorTwoOpen ? "pointer-events-none" : ""
-                            }`}
-                        >
-                            <Door
-                                isOpen={doorTwoOpen}
-                                phase={phase}
-                                scale={2 * scale[phase]}
-                                scaleDelay={1}
-                                phaseDelay={2}
-                            />
-                        </div>
-                        <div
-                            className={`col-start-1 row-start-1 z-12 ${
-                                doorThreeOpen ? "pointer-events-none" : ""
-                            }`}
-                        >
-                            <Door
-                                isOpen={doorThreeOpen}
-                                phase={phase}
-                                scale={3 * scale[phase]}
-                                scaleDelay={2}
-                                phaseDelay={3}
-                            />
-                        </div>
-                    </div>
-                </div>
-                <Challenge></Challenge>
-            </div>
-        </div>
-    );
+    return <HomePage challenge={<Challenge mdxContents={mdxContents} />} />;
 }

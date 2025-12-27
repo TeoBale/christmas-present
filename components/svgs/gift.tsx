@@ -1,15 +1,42 @@
 "use client";
 
+import { useScene } from "@/context/scene-context";
 import { motion, Variants } from "motion/react";
 import { useState } from "react";
 
 interface GiftProps {
-    phase?: string;
     scale: number;
+    onOpenComplete?: () => void;
 }
 
-export const Gift = ({ phase, scale }: GiftProps) => {
+export const Gift = ({ scale, onOpenComplete }: GiftProps) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [clickCount, setClickCount] = useState(0);
+    const { phase, setPhase } = useScene();
+
+    const handleClick = () => {
+        switch (phase) {
+            case "win":
+                if (clickCount >= 3) {
+                    setClickCount(0);
+                    setIsOpen(true);
+                } else {
+                    setClickCount((prev) => prev + 1);
+                }
+                break;
+            case "idle":
+                if (clickCount >= 3) {
+                    setClickCount(0);
+                    setPhase("challenge1");
+                } else {
+                    setClickCount((prev) => prev + 1);
+                }
+                break;
+            default:
+                break;
+        }
+    };
+
 
     const boxVariants: Variants = {
         hover: { scale: 1.05, transition: { duration: 0.2 } },
@@ -80,7 +107,7 @@ export const Gift = ({ phase, scale }: GiftProps) => {
             whileTap={
                 phase === "win" ? "tap" : phase !== "idle" ? undefined : "tap"
             }
-            //onClick={() => setIsOpen(!isOpen)}
+            onClick={handleClick}
         >
             <motion.g
                 id="scatola"
@@ -106,6 +133,11 @@ export const Gift = ({ phase, scale }: GiftProps) => {
                 />
             </motion.g>
             <motion.g
+                onAnimationComplete={(definition) => {
+                    if (definition === "opened" && onOpenComplete) {
+                        onOpenComplete();
+                    }
+                }}
                 id="coperchio"
                 variants={lidVariants}
                 initial="closed"
